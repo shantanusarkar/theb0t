@@ -36,7 +36,7 @@ class LogBot(irc.IRCClient):
 
     def  __init__(self, channel):
         self.chn = '#'+channel
-        self.channel_admin = ['kushal', 'sayan']
+        self.channel_admin = ['kushal', 'sayan', 'shantanu']
 
     def connectionMade(self):
         irc.IRCClient.connectionMade(self)
@@ -103,6 +103,22 @@ class LogBot(irc.IRCClient):
         if msg.lower().startswith('pingall:') and user_cond:
             self.pingmsg = msg.lower().lstrip('pingall:')
             self.names(channel).addCallback(self.pingall)
+
+        if msg.lower().startswith('topic:') and user_cond:
+            topics = msg.lower().lstrip('topic:')
+            self.topic(channel, topic= topics)
+
+        # Check to see if they're sending me a private message
+        if channel == self.nickname:
+            msg = "It isn't nice to whisper!  Play nice with the group."
+            self.msg(user, msg)
+            return
+
+        # Otherwise check to see if it is a message directed at me
+        if msg.startswith(self.nickname ) and user not in self.channel_admin:
+            msg = "%s: I am busy! Please do not disturb. " % user
+            self.msg(channel, msg)
+            self.logger.log("<%s> %s" % (self.nickname, msg))
 
     def action(self, user, channel, msg):
         """This will get called when the bot sees someone do an action."""
