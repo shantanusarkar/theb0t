@@ -36,7 +36,7 @@ class LogBot(irc.IRCClient):
 
     def  __init__(self, channel):
         self.chn = '#'+channel
-        self.channel_admin = ['kushal', 'sayan', 'shantanu']
+        self.channel_admin = ['kushal', 'sayan']
 
     def connectionMade(self):
         irc.IRCClient.connectionMade(self)
@@ -109,7 +109,7 @@ class LogBot(irc.IRCClient):
             self.topic(channel, topic= topics)
 
         # Check to see if they're sending me a private message
-        if channel == self.nickname:
+        if channel == self.nickname and user not in self.channel_admin:
             msg = "It isn't nice to whisper!  Play nice with the group."
             self.msg(user, msg)
             return
